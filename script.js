@@ -21,72 +21,75 @@ nav.addEventListener("click", (event) => {
   }
 });
 
-const snapTargets = [...document.querySelectorAll("main > section, .footer")];
-let isSnapScrolling = false;
+const pageSections = [...document.querySelectorAll("main > section, .footer")];
+const pageScrollDuration = 800;
+let isPageScrolling = false;
+let wheelGestureEnded = true;
+let scrollAnimationEnded = true;
+let wheelEndTimer;
 
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function getSectionTop(section, index) {
+  const top = section.getBoundingClientRect().top + window.scrollY;
+  return Math.max(0, Math.round(top));
 }
 
-function getSnapPoints() {
-  const headerOffset = 76;
-  const viewport = window.innerHeight;
-  const maxScroll = document.documentElement.scrollHeight - viewport;
-  const points = new Set([0, Math.max(0, maxScroll)]);
+function getCurrentSectionIndex() {
+  const currentY = window.scrollY;
+  let closestIndex = 0;
+  let closestDistance = Infinity;
 
-  snapTargets.forEach((target) => {
-    const top = Math.max(0, target.offsetTop - headerOffset);
-    points.add(Math.round(top));
+  pageSections.forEach((section, index) => {
+    const distance = Math.abs(getSectionTop(section, index) - currentY);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestIndex = index;
+    }
   });
 
-  return [...points].sort((a, b) => a - b);
+  return closestIndex;
 }
 
-function animateScrollTo(targetY) {
-  const startY = window.scrollY;
-  const distance = targetY - startY;
-  const duration = Math.min(1150, Math.max(820, Math.abs(distance) * 0.32));
-  const startTime = performance.now();
-
-  isSnapScrolling = true;
-
-  function step(now) {
-    const progress = Math.min(1, (now - startTime) / duration);
-    window.scrollTo(0, startY + distance * easeInOutCubic(progress));
-
-    if (progress < 1) {
-      requestAnimationFrame(step);
-      return;
-    }
-
-    window.scrollTo(0, targetY);
-    setTimeout(() => {
-      isSnapScrolling = false;
-    }, 80);
+function unlockPageScrollWhenReady() {
+  if (wheelGestureEnded && scrollAnimationEnded) {
+    isPageScrolling = false;
   }
-
-  requestAnimationFrame(step);
 }
 
 window.addEventListener(
   "wheel",
   (event) => {
-    if (event.ctrlKey || Math.abs(event.deltaY) < 45) return;
+    if (event.ctrlKey || Math.abs(event.deltaY) < 12) return;
 
     event.preventDefault();
-    if (isSnapScrolling) return;
+    wheelGestureEnded = false;
+    clearTimeout(wheelEndTimer);
+    wheelEndTimer = setTimeout(() => {
+      wheelGestureEnded = true;
+      unlockPageScrollWhenReady();
+    }, 180);
 
-    const current = window.scrollY;
-    const points = getSnapPoints();
+    if (isPageScrolling) return;
+
+    const currentIndex = getCurrentSectionIndex();
     const direction = Math.sign(event.deltaY);
-    const target =
-      direction > 0
-        ? points.find((point) => point > current + 48)
-        : [...points].reverse().find((point) => point < current - 48);
+    const targetIndex = Math.min(
+      pageSections.length - 1,
+      Math.max(0, currentIndex + direction)
+    );
 
-    if (target !== undefined) {
-      animateScrollTo(target);
-    }
+    if (targetIndex === currentIndex) return;
+
+    isPageScrolling = true;
+    scrollAnimationEnded = false;
+    window.scrollTo({
+      top: getSectionTop(pageSections[targetIndex], targetIndex),
+      behavior: "smooth",
+    });
+
+    setTimeout(() => {
+      scrollAnimationEnded = true;
+      unlockPageScrollWhenReady();
+    }, pageScrollDuration);
   },
   { passive: false }
 );

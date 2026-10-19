@@ -16,8 +16,6 @@
 * { box-sizing: border-box; }
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 76px;
-  scroll-snap-type: y mandatory;
 }
 body {
   margin: 0;
@@ -25,10 +23,6 @@ body {
   color: var(--ink);
   font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
   letter-spacing: 0;
-}
-main > section,
-.footer {
-  scroll-snap-align: start;
 }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
@@ -72,7 +66,7 @@ button, input { font: inherit; }
   color: var(--white);
 }
 .hero-media, .hero-shade { position: absolute; inset: 0; }
-.hero-media { background: url("assets/jaecheon-entry-hero.png") center / cover no-repeat; transform: scale(1.02); }
+.hero-media { background: url("assets/paju-title-background.png") center / cover no-repeat; transform: scale(1.02); }
 .hero-shade {
   background:
     linear-gradient(90deg, rgba(5, 13, 9, 0.96), rgba(5, 13, 9, 0.74) 38%, rgba(5, 13, 9, 0.12) 78%),
@@ -84,7 +78,7 @@ button, input { font: inherit; }
   width: min(1180px, calc(100% - 36px));
   margin: 0 auto;
   padding: 136px 0 44px;
-  transform: translateX(clamp(-48px, -3vw, -24px));
+  transform: translate(clamp(-48px, -3vw, -24px), -106px);
 }
 .hero-badge {
   display: inline-flex;
@@ -262,6 +256,67 @@ button, input { font: inherit; }
 .master:not(.master-detail) {
   gap: clamp(22px, 3vw, 34px);
 }
+#project.master {
+  height: 100svh;
+  min-height: 680px;
+  justify-content: center;
+  gap: clamp(18px, 2.2svh, 26px);
+  padding-top: 76px;
+  padding-bottom: 32px;
+  overflow: hidden;
+}
+#project .master-heading {
+  flex: none;
+  width: 100%;
+  max-width: min(1180px, 85svh);
+}
+#project .master-heading .kicker {
+  margin-bottom: 6px;
+}
+#project .master-heading h2 {
+  max-width: 1180px;
+  font-size: clamp(28px, 4svh, 48px);
+  line-height: 1.04;
+}
+#project .master-title-line {
+  display: block;
+  white-space: nowrap;
+}
+#project .master-heading p:not(.kicker) {
+  margin: 14px 0 0;
+  max-width: 1180px;
+  font-size: clamp(16px, 1.9svh, 19px);
+  line-height: 1.45;
+}
+#project .master-description-line {
+  display: block;
+  white-space: nowrap;
+}
+#project .master-visual {
+  display: grid;
+  flex: none;
+  grid-template-rows: auto auto;
+  max-width: min(1180px, 85svh);
+  min-height: 0;
+  transform: none;
+}
+#project .master-visual img {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: auto;
+  object-fit: cover;
+}
+#project .master-stats div {
+  min-height: 80px;
+  padding: 14px 18px;
+}
+#project .master-stats dt {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+#project .master-stats dd {
+  font-size: 22px;
+}
 .master-heading {
   max-width: 1180px;
   margin: 0 auto;
@@ -283,6 +338,7 @@ button, input { font: inherit; }
   width: 100%;
   margin: 0 auto;
   box-shadow: var(--shadow);
+  transform: translateY(-18px);
 }
 .master-visual img,
 .master-gallery img {
@@ -290,7 +346,7 @@ button, input { font: inherit; }
   width: 100%;
 }
 .master-visual img {
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
 }
 .master-stats {
@@ -604,6 +660,7 @@ button, input { font: inherit; }
 #smart-farm .section-text {
   margin: 0;
   text-align: left;
+  transform: translateX(clamp(72px, 10vw, 160px));
 }
 #smart-farm .section-text .kicker,
 #smart-farm .section-text h2,
@@ -849,9 +906,9 @@ button, input { font: inherit; }
   box-shadow: var(--shadow);
 }
 .life-main-image img {
-  aspect-ratio: 16 / 6.4;
-  object-fit: cover;
-  object-position: center top;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
 }
 .day-grid {
   display: grid;
@@ -1058,6 +1115,14 @@ button, input { font: inherit; }
   text-align: center;
 }
 .footer { padding: 34px clamp(18px, 4vw, 58px); background: #080e0a; color: var(--white); }
+.footer-company {
+  display: grid;
+  gap: 4px;
+}
+.footer-company span {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 14px;
+}
 .footer p, .footer small { display: block; max-width: 1180px; color: rgba(255, 255, 255, 0.64); line-height: 1.75; }
 .mobile-fixed { display: none; }
 
@@ -1087,6 +1152,9 @@ button, input { font: inherit; }
   #smart-farm .section-text {
     text-align: center;
   }
+  #smart-farm .section-text {
+    transform: none;
+  }
   .three-up, .feature-grid, .feature-grid.compact, .process-grid, .income-flow, .master-zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .split, .master-gallery, .home-living-panel, .equipment-panel, .operation-panel, .life-feature-panel { grid-template-columns: 1fr; }
   .master-stats {
@@ -1112,7 +1180,6 @@ button, input { font: inherit; }
 
 @media (max-width: 680px) {
   .brand small { display: none; }
-  html { scroll-snap-type: y proximity; }
   .hero { min-height: 820px; }
   .section, .image-section, .life-section, .final-cta {
     min-height: auto;
@@ -1125,6 +1192,36 @@ button, input { font: inherit; }
   }
   .hero h1 { font-size: clamp(44px, 14vw, 76px); }
   .hero-actions, .hero-metrics, .three-up, .feature-grid, .feature-grid.compact, .process-grid, .income-flow, .day-grid, .master-zones, .master-stats { grid-template-columns: 1fr; }
+  #project.master {
+    gap: 14px;
+    padding: 72px 12px 20px;
+  }
+  #project .master-heading h2 {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+  #project .master-title-line {
+    white-space: normal;
+  }
+  #project .master-heading p:not(.kicker) {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  #project .master-description-line {
+    white-space: normal;
+  }
+  #project .master-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #project .master-stats div {
+    min-height: 54px;
+    padding: 8px 10px;
+  }
+  #project .master-stats dt {
+    font-size: 11px;
+  }
+  #project .master-stats dd {
+    font-size: 16px;
+  }
   .final-cta h2 {
     white-space: normal;
   }
